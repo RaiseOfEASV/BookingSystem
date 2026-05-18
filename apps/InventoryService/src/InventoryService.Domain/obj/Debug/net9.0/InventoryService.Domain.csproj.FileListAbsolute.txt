@@ -1,0 +1,12 @@
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\bin\Debug\net9.0\InventoryService.Domain.deps.json
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\bin\Debug\net9.0\InventoryService.Domain.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\bin\Debug\net9.0\InventoryService.Domain.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.AssemblyInfoInputs.cache
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.AssemblyInfo.cs
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.csproj.CoreCompileInputs.cache
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.sourcelink.json
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\refint\InventoryService.Domain.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\ref\InventoryService.Domain.dll

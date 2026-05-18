@@ -1,0 +1,52 @@
+# Centralized observability stack – run once for all services.
+#
+# Usage:
+#   cp .env.example .env   # fill in SEQ_ADMIN_PASSWORD
+#   docker compose up -d
+#
+# Services that want to ship logs/traces must join the shared network:
+#   networks:
+#     - happyheadlines-observability  (declared as external: true)
+#
+# They can then reach:
+#   Seq    → http://seq:80       (log ingestion)
+#   Jaeger → http://jaeger:4317  (OTLP gRPC trace ingestion)
+
+services:
+
+  # ── Seq (structured log aggregation) ────────────────────────────────────────
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    env_file: .env
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINPASSWORD: ${SEQ_ADMIN_PASSWORD}
+    ports:
+      - "5341:80"            # UI → http://localhost:5341
+    volumes:
+      - seq-data:/data
+    networks:
+      - observability
+    restart: unless-stopped
+
+  # ── Jaeger (distributed tracing) ────────────────────────────────────────────
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"        # UI   → http://localhost:16686
+      - "4317:4317"          # OTLP gRPC receiver (services point here)
+    networks:
+      - observability
+    restart: unless-stopped
+
+networks:
+  observability:
+    name: happyheadlines-observability
+    driver: bridge
+
+volumes:
+  seq-data:

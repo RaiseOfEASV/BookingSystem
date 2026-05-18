@@ -1,0 +1,47 @@
+# Centralized messaging stack – run once for all services.
+#
+# Usage:
+#   cp .env.example .env   # fill in RABBITMQ_USER and RABBITMQ_PASSWORD
+#   docker compose up -d
+#
+# Services that want to publish/consume messages must join the shared network:
+#   networks:
+#     - happyheadlines-messaging  (declared as external: true)
+#
+# They can then reach:
+#   RabbitMQ → amqp://rabbitmq:5672   (AMQP)
+#   RabbitMQ → http://rabbitmq:15672  (management UI)
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: happyheadlines-rabbitmq
+    env_file: .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"          # AMQP
+      - "15672:15672"        # Management UI → http://localhost:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - messaging
+    restart: unless-stopped
+
+networks:
+  messaging:
+    name: happyheadlines-messaging
+    driver: bridge
+    labels:
+      com.docker.compose.project: "messaging"
+      
+
+volumes:
+  rabbitmq-data:

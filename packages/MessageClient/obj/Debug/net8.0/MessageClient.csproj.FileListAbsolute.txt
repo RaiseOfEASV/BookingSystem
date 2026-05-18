@@ -1,0 +1,13 @@
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\bin\Debug\net8.0\MessageClient.deps.json
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\bin\Debug\net8.0\MessageClient.dll
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\bin\Debug\net8.0\MessageClient.pdb
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.csproj.AssemblyReference.cache
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.GeneratedMSBuildEditorConfig.editorconfig
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.AssemblyInfoInputs.cache
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.AssemblyInfo.cs
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.csproj.CoreCompileInputs.cache
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.sourcelink.json
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.dll
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\refint\MessageClient.dll
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\MessageClient.pdb
+D:\TOP_UP\sls\bizcord-serverdomain\bizcord-microservices\packages\MessageClient\obj\Debug\net8.0\ref\MessageClient.dll

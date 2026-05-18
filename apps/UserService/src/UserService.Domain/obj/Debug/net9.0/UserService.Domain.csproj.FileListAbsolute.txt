@@ -1,0 +1,12 @@
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\bin\Debug\net9.0\UserService.Domain.deps.json
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\bin\Debug\net9.0\UserService.Domain.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\bin\Debug\net9.0\UserService.Domain.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\UserService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\UserService.Domain.AssemblyInfoInputs.cache
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\UserService.Domain.AssemblyInfo.cs
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\UserService.Domain.csproj.CoreCompileInputs.cache
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\UserService.Domain.sourcelink.json
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\UserService.Domain.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\refint\UserService.Domain.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\UserService.Domain.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\UserService\src\UserService.Domain\obj\Debug\net9.0\ref\UserService.Domain.dll

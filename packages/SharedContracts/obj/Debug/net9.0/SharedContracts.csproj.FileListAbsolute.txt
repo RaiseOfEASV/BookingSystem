@@ -1,0 +1,12 @@
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\bin\Debug\net9.0\SharedContracts.deps.json
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\bin\Debug\net9.0\SharedContracts.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\bin\Debug\net9.0\SharedContracts.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\SharedContracts.GeneratedMSBuildEditorConfig.editorconfig
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\SharedContracts.AssemblyInfoInputs.cache
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\SharedContracts.AssemblyInfo.cs
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\SharedContracts.csproj.CoreCompileInputs.cache
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\SharedContracts.sourcelink.json
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\SharedContracts.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\refint\SharedContracts.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\SharedContracts.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\packages\SharedContracts\obj\Debug\net9.0\ref\SharedContracts.dll

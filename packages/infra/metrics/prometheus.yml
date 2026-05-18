@@ -1,0 +1,61 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # article-service instances (3 replicas, no explicit container_name)
+  - job_name: article-service
+    static_configs:
+      - targets:
+          - article-service-articles-api-1-1:8080
+          - article-service-articles-api-2-1:8080
+          - article-service-articles-api-3-1:8080
+    metrics_path: /metrics
+
+  # comment-service
+  - job_name: comment-service
+    static_configs:
+      - targets:
+          - comment-service-comment-api-1-1:8080
+    metrics_path: /metrics
+
+  # draft-service
+  - job_name: draft-service
+    static_configs:
+      - targets:
+          - draft-service:8080
+    metrics_path: /metrics
+
+  # publisher-service
+  - job_name: publisher-service
+    static_configs:
+      - targets:
+          - publisher-service:8080
+    metrics_path: /metrics
+
+  # profanity-service
+  - job_name: profanity-service
+    static_configs:
+      - targets:
+          - profanity-api:8080
+    metrics_path: /metrics
+
+  # newsletter-service
+  - job_name: newsletter-service
+    static_configs:
+      - targets:
+          - newsletter-service:8080
+    metrics_path: /metrics
+
+  # subscriber-service
+  - job_name: subscriber-service
+    static_configs:
+      - targets:
+          - subscriber-service:8080
+    metrics_path: /metrics
+
+  # prometheus self-monitoring
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - localhost:9090
