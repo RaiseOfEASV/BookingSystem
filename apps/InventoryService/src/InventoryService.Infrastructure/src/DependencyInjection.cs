@@ -1,6 +1,7 @@
 using InventoryService.Application.EventHandlers;
 using InventoryService.Application.Interfaces;
 using InventoryService.Application.Services;
+using InventoryService.Infrastructure.BackgroundWorkers;
 using InventoryService.Infrastructure.Persistence;
 using InventoryService.Infrastructure.Repositories;
 using InventoryService.Infrastructure.Repositories.Postgres;
@@ -23,7 +24,11 @@ public static class DependencyInjection
         services.AddScoped<IResourceRepository, ResourceRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IReserveSeatService, ReserveSeatService>();
         services.AddScoped<IEventService, EventService>();
+
+        services.AddHostedService<ReserveSeatWorker>();
+
         return services;
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace DefaultNamespace;
+namespace SharedContracts.Saga.Commands;
 
-public class UpdateBokingStatusCommand
-{
-    
-}
+public record ConfirmBookingStatusCommand(
+    Guid CommandId,
+    Guid CorrelationId,
+    Guid BookingId,
+    DateTime IssuedAt
+);

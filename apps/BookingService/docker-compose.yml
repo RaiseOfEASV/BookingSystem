@@ -30,8 +30,7 @@ services:
     depends_on:
       - booking-api-1
     networks:
-      - default
-      - services
+      - bookingnetwork
 
   # ── Booking API ─────────────────────────────────────────────────────────────
   booking-api-1: &api
@@ -48,15 +47,13 @@ services:
       booking-db:
         condition: service_healthy
     networks:
-      - default
-      - services
+      - bookingnetwork
   booking-api-2:
     <<: *api
 
 networks:
-  services:
+  bookingnetwork:
     external: true
-    name: bookingsystem-services
 
 volumes:
   booking-db-data:

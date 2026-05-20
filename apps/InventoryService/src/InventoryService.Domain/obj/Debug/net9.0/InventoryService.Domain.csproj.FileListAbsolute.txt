@@ -10,3 +10,7 @@ D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventorySe
 D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\refint\InventoryService.Domain.dll
 D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.pdb
 D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\ref\InventoryService.Domain.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\bin\Debug\net9.0\Exceptions.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\bin\Debug\net9.0\Exceptions.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\InventoryService.Domain.csproj.AssemblyReference.cache
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Domain\obj\Debug\net9.0\Inventor.6FB98E4F.Up2Date

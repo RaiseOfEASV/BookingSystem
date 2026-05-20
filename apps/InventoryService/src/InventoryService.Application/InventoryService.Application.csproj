@@ -2,6 +2,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\InventoryService.Domain\InventoryService.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\MessageClient\MessageClient.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\SharedContracts\SharedContracts.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

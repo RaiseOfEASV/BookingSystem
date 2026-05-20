@@ -9,10 +9,17 @@ COPY apps/InventoryService/src/InventoryService.Application/InventoryService.App
 COPY apps/InventoryService/src/InventoryService.Infrastructure/InventoryService.Infrastructure.csproj           apps/InventoryService/src/InventoryService.Infrastructure/
 COPY apps/InventoryService/src/InventoryService.API/InventoryService.API.csproj                                 apps/InventoryService/src/InventoryService.API/
 
+# Copy package csproj files (referenced by the solution)
+COPY packages/SharedContracts/SharedContracts.csproj         packages/SharedContracts/
+COPY packages/MessageClient/MessageClient.csproj             packages/MessageClient/
+COPY packages/Exceptions/Exceptions/Exceptions.csproj        packages/Exceptions/Exceptions/
+COPY packages/VaultClient/VaultClient.csproj                 packages/VaultClient/
+
 RUN dotnet restore apps/InventoryService/InventoryService.sln
 
 # Copy the rest of the source and publish
 COPY apps/InventoryService/src/ apps/InventoryService/src/
+COPY packages/                  packages/
 
 RUN dotnet publish apps/InventoryService/src/InventoryService.API/InventoryService.API.csproj \
     -c Release \

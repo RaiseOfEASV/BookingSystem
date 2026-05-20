@@ -5,5 +5,6 @@ public class SeatInventoryDto
     public Guid     SeatId  { get; set; }
     public string   Status  { get; set; } = string.Empty;
     public int      Version { get; set; } = 1;
-    public  
+    public Guid?     HeldBy  { get; set; }
+    public DateTime? HeldAt  { get; set; }
 }

@@ -15,7 +15,7 @@
 services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: happyheadlines-rabbitmq
+    container_name: bookingservice-rabbitmq
     env_file: .env
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
@@ -32,15 +32,12 @@ services:
       retries: 5
       start_period: 20s
     networks:
-      - messaging
+      - bookingnetwork
     restart: unless-stopped
 
 networks:
-  messaging:
-    name: happyheadlines-messaging
-    driver: bridge
-    labels:
-      com.docker.compose.project: "messaging"
+  bookingnetwork:
+    external: true
       
 
 volumes:

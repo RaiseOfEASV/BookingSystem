@@ -57,7 +57,7 @@ public class ResourceRepository : IResourceRepository
             var updated = await _context.SeatInventories
                 .Where(si => si.SeatId  == seatInventory.SeatId  &&
                              si.EventId == seatInventory.EventId &&
-                             si.Version == seatInventory.Version)
+                             si.Version == seatInventory.Version-1)
                 .ExecuteUpdateAsync(si => si
                         .SetProperty(x => x.Status,  seatInventory.Status)
                         .SetProperty(x => x.Version, seatInventory.Version)

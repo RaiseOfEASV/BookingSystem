@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Reflection;
 using MessageClient.Interfaces;
 using MessageClient.Types;
@@ -17,26 +17,31 @@ public class MessageHandlerRegistry
 
     public void RegisterAllHandlers(IMessageClient messageClient, string subscriptionPrefix = "")
     {
-        // Get all concrete types in all loaded assemblies
-        var allTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).Where(t => t.IsClass && !t.IsAbstract).ToList();
-        
+        // Scan all loaded assemblies. Guard each assembly individually so a broken
+        // type (e.g. SqlGuidCaster in Microsoft.Data.SqlClient on Linux) does not
+        // abort the entire scan — use the partially-loaded types from the exception.
+        var allTypes = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a =>
+            {
+                try   { return a.GetTypes(); }
+                catch (ReflectionTypeLoadException e) { return e.Types.Where(t => t != null)!; }
+            })
+            .Where(t => t.IsClass && !t.IsAbstract)
+            .ToList();
+
         foreach (var type in allTypes)
         {
-            // Check if it implements IMessageHandler<T>    
-            var messageHandlerInterfaces = type.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMessageHandler<>));
+            var messageHandlerInterfaces = type.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMessageHandler<>));
 
             foreach (var handlerInterface in messageHandlerInterfaces)
             {
-                // handlerInterface is e.g. IMessageHandler<SomeMessageType>
                 var messageType = handlerInterface.GetGenericArguments()[0];
                 Console.WriteLine($"Found handler {type.Name} for message type {messageType.Name}");
 
-                // Generate a dynamic subscription for the message type
-                // Use reflection to call IMessagingClient.SubscribeAsync<T>(...)
                 var subscribeAsyncMethods = typeof(IMessageClient).GetMethods()
                     .Where(m => m.Name == nameof(IMessageClient.SubscribeAsync)).ToList();
 
-                // Pick the correct SubscribeAsync<T> method
                 var subscribeAsyncMethod = subscribeAsyncMethods.FirstOrDefault(m =>
                 {
                     var parameters = m.GetParameters();
@@ -44,54 +49,43 @@ public class MessageHandlerRegistry
                            && parameters[0].ParameterType == typeof(MessageSubscription)
                            && parameters[1].Name.StartsWith("handle");
                 });
+
                 if (subscribeAsyncMethod == null)
                 {
-                    Console.WriteLine(
-                        $"Could not find matching SubscribeAsync<T> method for message type {messageType.Name}");
+                    Console.WriteLine($"Could not find matching SubscribeAsync<T> method for message type {messageType.Name}");
                     continue;
                 }
 
-                // Make the subscribe method generic for the message type
                 var genericSubscribeMethod = subscribeAsyncMethod.MakeGenericMethod(messageType);
 
-                // Build the delegate: (T message) => ???.Handler(message, CancellationToken)
-                // Use reflection to create an instance of the handler
-                var handlerInstance = ActivatorUtilities.CreateInstance(_serviceProvider, type);
-
-                if (handlerInstance == null)
-                {
-                    Console.WriteLine($"Could not create instance of {type.Name}");
-                    continue;
-                }
-
-                // Get the Handler method from the handler interface
                 var methodInfo = handlerInterface.GetMethod("Handle");
                 if (methodInfo == null)
                 {
-                    Console.WriteLine($"No Handler method found in {handlerInterface.Name}");
+                    Console.WriteLine($"No Handle method found in {handlerInterface.Name}");
                     continue;
                 }
 
-                // Create a typed delegate for the handler method
-                Func<object, Task> typedFunc = msg =>
+                // Capture handler type for the closure.
+                // Create a fresh DI scope per message so scoped services (DbContext,
+                // repositories) are resolved and disposed correctly for each message.
+                var handlerType = type;
+                Func<object, Task> typedFunc = async msg =>
                 {
-                    return (Task)methodInfo.Invoke(handlerInstance, new object[] { msg, CancellationToken.None });
+                    using var scope           = _serviceProvider.CreateScope();
+                    var       handlerInstance = ActivatorUtilities.CreateInstance(scope.ServiceProvider, handlerType);
+                    await (Task)methodInfo.Invoke(handlerInstance, new object[] { msg, CancellationToken.None })!;
                 };
 
-                // SubscribeAsync<T> expects a `Action<T>`
-                // Using a reflection "trick" to create a lambda expression
-                var param = Expression.Parameter(messageType, "message");
-                var expr = Expression.Invoke(Expression.Constant(typedFunc), param);
+                var param      = Expression.Parameter(messageType, "message");
+                var expr       = Expression.Invoke(Expression.Constant(typedFunc), param);
                 var lambdaType = typeof(Action<>).MakeGenericType(messageType);
-                var lambda = Expression.Lambda(lambdaType, expr, param).Compile();
+                var lambda     = Expression.Lambda(lambdaType, expr, param).Compile();
 
-                // Build a unique subscriptionId
-                MessageSubscription subscriptionId =
-                    new MessageSubscription($"{subscriptionPrefix}_{type.FullName}_{messageType.Name}");
+                var subscriptionId = new MessageSubscription(
+                    $"{subscriptionPrefix}_{type.FullName}_{messageType.Name}");
 
-                // Finally, call the generic SubscribeAsync<T> method
                 genericSubscribeMethod.Invoke(
-                    obj: messageClient, 
+                    obj:        messageClient,
                     parameters: new object[] { subscriptionId, lambda });
             }
         }

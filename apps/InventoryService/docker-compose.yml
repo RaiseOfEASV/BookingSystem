@@ -13,12 +13,75 @@ services:
       - "1435:1433"         
     volumes:
       - inventory-db-data:/var/opt/mssql
+    networks:
+      - bookingnetwork
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -C -Q 'SELECT 1' || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
+
+  # ── PostgreSQL (message persistence) ────────────────────────────────────────
+  inventory-msg-db:
+    image: postgres:16-alpine
+    container_name: inventory-msg-db
+    env_file: .env
+    environment:
+      POSTGRES_DB: ${MSG_DB}
+      POSTGRES_USER: ${MSG_DB_USER}
+      POSTGRES_PASSWORD: ${MSG_DB_PASSWORD}
+    ports:
+      - "5435:5432"
+    volumes:
+      - inventory-msg-db-data:/var/lib/postgresql/data
+    networks:
+      - bookingnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MSG_DB_USER} -d ${MSG_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ── Flyway ──────────────────────────────────────────────────────────────────
+  inventory-flyway:
+    image: flyway/flyway:latest
+    container_name: inventory-flyway
+    command: migrate
+    env_file: .env
+    volumes:
+      - ./db/flyway/flyway-inventory:/flyway/conf
+      - ./db/migrations/InventorySqlServer:/flyway/sql
+    environment:
+      FLYWAY_SCHEMAS: dbo
+      FLYWAY_CONNECT_RETRIES: "30"
+    depends_on:
+      inventory-db:
+        condition: service_healthy
+    networks:
+      - bookingnetwork
+  
+      
+  inventory-messages-flyway:
+    image: flyway/flyway:latest
+    container_name: inventory-messages-flyway
+    command: migrate
+    env_file: .env
+    volumes:
+      - ./db/flyway/flyway-messages:/flyway/conf
+      - ./db/migrations/InventoryMessagesPostgresDb:/flyway/sql
+    environment:
+      FLYWAY_URL: "jdbc:postgresql://inventory-msg-db:5432/${MSG_DB}"
+      FLYWAY_USER: "${MSG_DB_USER}"
+      FLYWAY_PASSWORD: "${MSG_DB_PASSWORD}"
+      FLYWAY_SCHEMAS: public
+      FLYWAY_CONNECT_RETRIES: "30"
+    depends_on:
+      inventory-msg-db:
+        condition: service_healthy
+    networks:
+      - bookingnetwork
 
   # ── Nginx ───────────────────────────────────────────────────────────────────
   nginx:
@@ -30,8 +93,7 @@ services:
     depends_on:
       - inventory-api-1
     networks:
-      - default
-      - services
+      - bookingnetwork
 
   # ── Inventory API ───────────────────────────────────────────────────────────
   inventory-api-1: &api
@@ -47,16 +109,21 @@ services:
     depends_on:
       inventory-db:
         condition: service_healthy
+      inventory-msg-db:
+        condition: service_healthy
+      inventory-flyway:
+        condition: service_completed_successfully
+      inventory-messages-flyway:
+        condition: service_completed_successfully
     networks:
-      - default
-      - services
+      - bookingnetwork
   inventory-api-2:
     <<: *api
 
 networks:
-  services:
+  bookingnetwork:
     external: true
-    name: bookingsystem-services
 
 volumes:
   inventory-db-data:
+  inventory-msg-db-data:

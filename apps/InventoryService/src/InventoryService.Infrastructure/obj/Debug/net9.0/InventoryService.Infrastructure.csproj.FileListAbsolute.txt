@@ -18,3 +18,9 @@ D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventorySe
 D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\obj\Debug\net9.0\InventoryService.Infrastructure.pdb
 D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\obj\Debug\net9.0\InventoryService.Infrastructure.genruntimeconfig.cache
 D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\obj\Debug\net9.0\ref\InventoryService.Infrastructure.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\bin\Debug\net9.0\Exceptions.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\bin\Debug\net9.0\MessageClient.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\bin\Debug\net9.0\SharedContracts.dll
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\bin\Debug\net9.0\Exceptions.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\bin\Debug\net9.0\MessageClient.pdb
+D:\TOP_UP\sls\bookingservice\BookingSystem\apps\InventoryService\src\InventoryService.Infrastructure\bin\Debug\net9.0\SharedContracts.pdb

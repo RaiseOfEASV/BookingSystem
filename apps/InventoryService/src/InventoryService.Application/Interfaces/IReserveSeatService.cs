@@ -1,6 +1,10 @@
-﻿namespace InventoryService.Application.Interfaces;
+﻿using SharedContracts.Saga.Commands;
+using SharedContracts.Saga.Events;
 
-public class IReserveSeatService
+namespace InventoryService.Application.Interfaces;
+
+public interface IReserveSeatService
 {
-    
+    Task HandleReserveSeat(ReserveSeatCommand command, CancellationToken cancellationToken);
+    Task HandleMessageProcessingFailed(SeatReservationFailedEvent seatReservationFailedEvent, CancellationToken cancellationToken);
 }
