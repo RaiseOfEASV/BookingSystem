@@ -1,24 +1,42 @@
 services:
 
-  # ── SQL Server ──────────────────────────────────────────────────────────────
-  booking-db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: booking-db
+  # ── Postgres Server ──────────────────────────────────────────────────────────────
+  boking_db:
+    image: postgres:16-alpine
+    container_name: boking_db
     env_file: .env
     environment:
-      SA_PASSWORD: ${SA_PASSWORD}
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: Developer
+      POSTGRES_DB: ${BOOKING_DB}
+      POSTGRES_USER: ${BOOKING_DB_USER}
+      POSTGRES_PASSWORD: ${BOOKING_DB_PASSWORD}
     ports:
-      - "1434:1433"          # host 1434 → container 1433 (avoids conflict with other DBs)
+      - "5436:5432"
     volumes:
-      - booking-db-data:/var/opt/mssql
+      - booking-db-data:/var/lib/postgresql/data
+    networks:
+      - bookingnetwork
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -C -Q 'SELECT 1' || exit 1"]
+      test: ["CMD-SHELL", "pg_isready -U ${MSG_DB_USER} -d ${MSG_DB}"]
       interval: 10s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 5
+      start_period: 15s
+
+  # ── Redis ───────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: booking-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - booking-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bookingnetwork
 
   # ── Nginx ───────────────────────────────────────────────────────────────────
   nginx:
@@ -43,8 +61,11 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__DefaultConnection: "Server=booking-db;Database=${BOOKING_DB};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+      ConnectionStrings__Redis: "redis:6379"
     depends_on:
       booking-db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - bookingnetwork
@@ -57,3 +78,4 @@ networks:
 
 volumes:
   booking-db-data:
+  booking-redis-data:

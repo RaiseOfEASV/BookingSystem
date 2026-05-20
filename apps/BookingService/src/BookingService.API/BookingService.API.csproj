@@ -17,6 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\BookingService.Application\BookingService.Application.csproj" />
     <ProjectReference Include="..\BookingService.Infrastructure\BookingService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\MessageClient\MessageClient.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\Exceptions\Exceptions\Exceptions.csproj" />
   </ItemGroup>
 
 </Project>

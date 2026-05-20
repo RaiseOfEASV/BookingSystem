@@ -2,6 +2,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookingService.Domain\BookingService.Domain.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\SharedContracts\SharedContracts.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\MessageClient\MessageClient.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\Exceptions\Exceptions\Exceptions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="src\EventHandlers\" />
   </ItemGroup>
 
   <PropertyGroup>
