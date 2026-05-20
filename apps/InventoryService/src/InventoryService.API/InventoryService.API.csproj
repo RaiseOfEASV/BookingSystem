@@ -17,6 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\InventoryService.Application\InventoryService.Application.csproj" />
     <ProjectReference Include="..\InventoryService.Infrastructure\InventoryService.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\VaultClient\VaultClient.csproj" />
+    <ProjectReference Include="..\..\..\..\packages\MessageClient\MessageClient.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,9 @@
+using InventoryService.Application.EventHandlers;
 using InventoryService.Application.Interfaces;
 using InventoryService.Application.Services;
 using InventoryService.Infrastructure.Persistence;
 using InventoryService.Infrastructure.Repositories;
+using InventoryService.Infrastructure.Repositories.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,9 +17,13 @@ public static class DependencyInjection
         services.AddDbContext<InventoryDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IResourceRepository, ResourceRepository>();
-        services.AddScoped<IResourceService, ResourceService>();
+        services.AddDbContext<MessagesDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("MessagesConnection")));
 
+        services.AddScoped<IResourceRepository, ResourceRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IMessageRepository, MessageRepository>();
+        services.AddScoped<IEventService, EventService>();
         return services;
     }
 }
