@@ -1,4 +1,3 @@
-using BookingService.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace BookingService.Application.Models;
@@ -10,7 +9,7 @@ public record UpdateBookingRequest(
 
 public record UpdateBookingItemRequest(
     [Required] Guid ResourceId,
-    [Required] ResourceType ResourceType,
+    [Required] string ResourceType,
     [Required] string ResourceLocation,
     [Required] DateTime StartTime,
     [Required] DateTime EndTime,

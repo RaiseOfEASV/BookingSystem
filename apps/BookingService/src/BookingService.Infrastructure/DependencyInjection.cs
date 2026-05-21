@@ -1,5 +1,7 @@
 using BookingService.Application.Interfaces;
+using BookingService.Application.Sagas;
 using BookingService.Application.Services;
+using BookingService.Infrastructure.BackgroundWorkers;
 using BookingService.Infrastructure.Caching;
 using BookingService.Infrastructure.Persistence;
 using BookingService.Infrastructure.Repositories;
@@ -25,6 +27,9 @@ public static class DependencyInjection
         services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnection));
         services.AddSingleton<ISeatAvailabilityCache, SeatAvailabilityCache>();
         services.AddScoped<ISeatReservationService, SeatReservationService>();
+        services.AddScoped<BookingSagaOrchestrator>();
+
+        services.AddHostedService<OutboxWorker>();
 
         return services;
     }

@@ -8,11 +8,17 @@ COPY apps/BookingService/src/BookingService.Domain/BookingService.Domain.csproj 
 COPY apps/BookingService/src/BookingService.Application/BookingService.Application.csproj                   apps/BookingService/src/BookingService.Application/
 COPY apps/BookingService/src/BookingService.Infrastructure/BookingService.Infrastructure.csproj             apps/BookingService/src/BookingService.Infrastructure/
 COPY apps/BookingService/src/BookingService.API/BookingService.API.csproj                                   apps/BookingService/src/BookingService.API/
+COPY packages/SharedContracts/SharedContracts.csproj                                                        packages/SharedContracts/
+COPY packages/MessageClient/MessageClient.csproj                                                             packages/MessageClient/
+COPY packages/Exceptions/Exceptions/Exceptions.csproj                                                       packages/Exceptions/Exceptions/
 
 RUN dotnet restore apps/BookingService/BookingService.sln
 
 # Copy the rest of the source and publish
 COPY apps/BookingService/src/ apps/BookingService/src/
+COPY packages/SharedContracts/  packages/SharedContracts/
+COPY packages/MessageClient/    packages/MessageClient/
+COPY packages/Exceptions/       packages/Exceptions/
 
 RUN dotnet publish apps/BookingService/src/BookingService.API/BookingService.API.csproj \
     -c Release \

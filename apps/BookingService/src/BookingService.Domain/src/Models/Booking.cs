@@ -5,10 +5,11 @@ namespace BookingService.Domain.Models;
 
 public class Booking
 {
-    public Guid Id { get; init; }
-    public Guid CustomerId { get; init; }
-    public Guid EventId { get; init; }  // The specific event
-    public Guid SeatId { get; init; }   // Flattened: Exactly one seat per booking!
+    public Guid Id            { get; init; }
+    public Guid CorrelationId { get; init; }
+    public Guid CustomerId    { get; init; }
+    public Guid EventId       { get; init; }  // The specific event
+    public Guid SeatId        { get; init; }  // Flattened: Exactly one seat per booking!
     public required Price Price { get; init; }   // Flattened: The price for this specific seat
     public BookingStatus Status { get; private set; }
     public BookingCode Code { get; init; } = null!;
@@ -19,30 +20,33 @@ public class Booking
     // No more List<BookingItem> or RecalculateTotalPrice() needed!
 
     public static Booking Create(
-        Guid customerId, 
-        Guid eventId, 
-        Guid seatId, 
-        Price price, 
-        BookingCode code, 
-        string? notes)
+        Guid        correlationId,
+        Guid        customerId,
+        Guid        eventId,
+        Guid        seatId,
+        Price       price,
+        BookingCode code,
+        string?     notes)
     {
         return new Booking
         {
-            Id = Guid.NewGuid(),
-            CustomerId = customerId,
-            EventId = eventId,
-            SeatId = seatId,
-            Price = price,
-            Code = code,
-            Notes = notes,
-            Status = BookingStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            Id            = Guid.NewGuid(),
+            CorrelationId = correlationId,
+            CustomerId    = customerId,
+            EventId       = eventId,
+            SeatId        = seatId,
+            Price         = price,
+            Code          = code,
+            Notes         = notes,
+            Status        = BookingStatus.Pending,
+            CreatedAt     = DateTime.UtcNow,
+            UpdatedAt     = DateTime.UtcNow
         };
     }
 
     public static Booking Restore(
         Guid          id,
+        Guid          correlationId,
         Guid          customerId,
         Guid          eventId,
         Guid          seatId,
@@ -55,16 +59,17 @@ public class Booking
     {
         return new Booking
         {
-            Id         = id,
-            CustomerId = customerId,
-            EventId    = eventId,
-            SeatId     = seatId,
-            Price      = price,
-            Status     = status,
-            Code       = code,
-            Notes      = notes,
-            CreatedAt  = createdAt,
-            UpdatedAt  = updatedAt
+            Id            = id,
+            CorrelationId = correlationId,
+            CustomerId    = customerId,
+            EventId       = eventId,
+            SeatId        = seatId,
+            Price         = price,
+            Status        = status,
+            Code          = code,
+            Notes         = notes,
+            CreatedAt     = createdAt,
+            UpdatedAt     = updatedAt
         };
     }
 

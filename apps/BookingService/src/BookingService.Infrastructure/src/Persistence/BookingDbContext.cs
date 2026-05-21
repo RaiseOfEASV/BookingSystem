@@ -7,8 +7,9 @@ public class BookingDbContext : DbContext
 {
     public BookingDbContext(DbContextOptions<BookingDbContext> options) : base(options) { }
 
-    public DbSet<BookingEntity>     Bookings     => Set<BookingEntity>();
-    public DbSet<BookingSagaEntity> BookingSagas => Set<BookingSagaEntity>();
+    public DbSet<BookingEntity>      Bookings        => Set<BookingEntity>();
+    public DbSet<BookingSagaEntity>  BookingSagas    => Set<BookingSagaEntity>();
+    public DbSet<OutboxMessageEntity> OutboxMessages => Set<OutboxMessageEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,6 +22,14 @@ public class BookingDbContext : DbContext
             entity.Property(b => b.Id)
                   .HasColumnName("id")
                   .HasDefaultValueSql("gen_random_uuid()");
+
+            entity.Property(b => b.CorrelationId)
+                  .HasColumnName("correlation_id")
+                  .IsRequired();
+
+            entity.HasIndex(b => b.CorrelationId)
+                  .IsUnique()
+                  .HasDatabaseName("uq_bookings_correlation_id");
 
             entity.Property(b => b.CustomerId)
                   .HasColumnName("customer_id")
@@ -100,7 +109,24 @@ public class BookingDbContext : DbContext
             entity.Property(s => s.SeatId)
                   .HasColumnName("seat_id")
                   .IsRequired();
-              
+
+            entity.Property(s => s.CustomerId)
+                  .HasColumnName("customer_id")
+                  .IsRequired();
+
+            entity.Property(s => s.Amount)
+                  .HasColumnName("amount")
+                  .HasPrecision(18, 2)
+                  .IsRequired();
+
+            entity.Property(s => s.Currency)
+                  .HasColumnName("currency")
+                  .HasMaxLength(10)
+                  .IsRequired();
+
+            entity.Property(s => s.Notes)
+                  .HasColumnName("notes")
+                  .HasMaxLength(500);
 
             entity.Property(s => s.BookingId)
                   .HasColumnName("booking_id");
@@ -138,6 +164,39 @@ public class BookingDbContext : DbContext
             entity.HasIndex(s => s.Status)
                   .HasDatabaseName("ix_booking_sagas_active_status")
                   .HasFilter("status NOT IN ('finalized', 'failed', 'compensated')");
+        });
+
+        modelBuilder.Entity<OutboxMessageEntity>(entity =>
+        {
+            entity.ToTable("outbox_messages");
+
+            entity.HasKey(m => m.Id);
+
+            entity.Property(m => m.Id)
+                  .HasColumnName("id")
+                  .HasDefaultValueSql("gen_random_uuid()");
+
+            entity.Property(m => m.OccurredOn)
+                  .HasColumnName("occurred_on")
+                  .IsRequired();
+
+            entity.Property(m => m.Type)
+                  .HasColumnName("type")
+                  .HasMaxLength(500)
+                  .IsRequired();
+
+            entity.Property(m => m.Content)
+                  .HasColumnName("content")
+                  .HasColumnType("jsonb")
+                  .IsRequired();
+
+            entity.Property(m => m.ProcessedOn)
+                  .HasColumnName("processed_on");
+
+            // Partial index — background worker only reads unprocessed rows.
+            entity.HasIndex(m => m.OccurredOn)
+                  .HasDatabaseName("ix_outbox_messages_unprocessed")
+                  .HasFilter("processed_on IS NULL");
         });
     }
 }

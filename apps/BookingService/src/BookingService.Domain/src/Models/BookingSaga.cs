@@ -42,6 +42,41 @@ public class BookingSaga
         };
     }
 
+    public static BookingSaga Restore(
+        Guid      id,
+        Guid      eventId,
+        Guid      seatId,
+        Guid      customerId,
+        decimal   amount,
+        string    currency,
+        string?   notes,
+        Guid?     bookingId,
+        Guid      correlationId,
+        string?   paymentId,
+        SagaStatus status,
+        string?   failureReason,
+        DateTime  createdAt,
+        DateTime  updatedAt)
+    {
+        return new BookingSaga
+        {
+            Id            = id,
+            EventId       = eventId,
+            SeatId        = seatId,
+            CustomerId    = customerId,
+            Amount        = amount,
+            Currency      = currency,
+            Notes         = notes,
+            BookingId     = bookingId,
+            CorrelationId = correlationId,
+            PaymentId     = paymentId,
+            Status        = status,
+            FailureReason = failureReason,
+            CreatedAt     = createdAt,
+            UpdatedAt     = updatedAt
+        };
+    }
+
     public void MarkSeatReserved()
     {
         Transition(SagaStatus.CheckingSeatAvailability, SagaStatus.SeatReserved);

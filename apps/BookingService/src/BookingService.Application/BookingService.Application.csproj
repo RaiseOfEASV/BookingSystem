@@ -8,7 +8,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="src\EventHandlers\" />
+    <Folder Include="src\Events\EventHandlers\" />
+    <Folder Include="src\Events\Publishers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.5" />
+    <PackageReference Include="OneOf" Version="3.0.271" />
   </ItemGroup>
 
   <PropertyGroup>

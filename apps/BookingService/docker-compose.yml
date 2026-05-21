@@ -1,9 +1,9 @@
 services:
 
-  # ── Postgres Server ──────────────────────────────────────────────────────────────
-  boking_db:
+  # ── Postgres ─────────────────────────────────────────────────────────────────
+  booking-db:
     image: postgres:16-alpine
-    container_name: boking_db
+    container_name: booking-db
     env_file: .env
     environment:
       POSTGRES_DB: ${BOOKING_DB}
@@ -22,7 +22,28 @@ services:
       retries: 5
       start_period: 15s
 
-  # ── Redis ───────────────────────────────────────────────────────────────────
+  # ── Flyway migrations ────────────────────────────────────────────────────────
+  booking-flyway:
+    image: flyway/flyway:latest
+    container_name: booking-flyway
+    command: migrate
+    env_file: .env
+    volumes:
+      - ./db/flyway:/flyway/conf
+      - ./db/migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: "jdbc:postgresql://booking-db:5432/${BOOKING_DB}"
+      FLYWAY_USER: "${BOOKING_DB_USER}"
+      FLYWAY_PASSWORD: "${BOOKING_DB_PASSWORD}"
+      FLYWAY_SCHEMAS: public
+      FLYWAY_CONNECT_RETRIES: "30"
+    depends_on:
+      booking-db:
+        condition: service_healthy
+    networks:
+      - bookingnetwork
+
+  # ── Redis ────────────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: booking-redis
@@ -38,7 +59,7 @@ services:
     networks:
       - bookingnetwork
 
-  # ── Nginx ───────────────────────────────────────────────────────────────────
+  # ── Nginx ────────────────────────────────────────────────────────────────────
   nginx:
     image: nginx:alpine
     ports:
@@ -47,10 +68,11 @@ services:
       - ./nginx/:/etc/nginx/conf.d/
     depends_on:
       - booking-api-1
+      - booking-api-2
     networks:
       - bookingnetwork
 
-  # ── Booking API ─────────────────────────────────────────────────────────────
+  # ── Booking API ──────────────────────────────────────────────────────────────
   booking-api-1: &api
     build:
       context: ../..
@@ -60,8 +82,10 @@ services:
       - "8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: "Server=booking-db;Database=${BOOKING_DB};User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Host=booking-db;Database=${BOOKING_DB};Username=${BOOKING_DB_USER};Password=${BOOKING_DB_PASSWORD}"
       ConnectionStrings__Redis: "redis:6379"
+      RabbitMQ__ConnectionString: "${RABBITMQ_CONNECTION_STRING}"
+      RabbitMQ__SubscriptionPrefix: "${RABBITMQ_SUBSCRIPTION_PREFIX}"
     depends_on:
       booking-db:
         condition: service_healthy

@@ -4,7 +4,11 @@ public class BookingSagaEntity
 {
     public Guid      Id            { get; set; }
     public Guid      EventId       { get; set; }
-    public Guid    SeatId        { get; set; } 
+    public Guid      SeatId        { get; set; }
+    public Guid      CustomerId    { get; set; }
+    public decimal   Amount        { get; set; }
+    public string    Currency      { get; set; } = null!;
+    public string?   Notes         { get; set; }
     public Guid?     BookingId     { get; set; }
     public Guid      CorrelationId { get; set; }
     public string?   PaymentId     { get; set; }

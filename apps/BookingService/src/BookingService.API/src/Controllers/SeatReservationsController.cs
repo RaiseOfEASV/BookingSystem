@@ -1,5 +1,6 @@
-using BookingService.Application.Interfaces;
 using BookingService.Application.Models;
+using BookingService.Application.Sagas;
+using BookingService.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookingService.API.Controllers;
@@ -10,10 +11,14 @@ namespace BookingService.API.Controllers;
 public class SeatReservationsController : ControllerBase
 {
     private readonly ISeatReservationService _reservationService;
+    private readonly BookingSagaOrchestrator _orchestrator;
 
-    public SeatReservationsController(ISeatReservationService reservationService)
+    public SeatReservationsController(
+        ISeatReservationService reservationService,
+        BookingSagaOrchestrator orchestrator)
     {
         _reservationService = reservationService;
+        _orchestrator       = orchestrator;
     }
 
     /// <summary>
@@ -29,10 +34,17 @@ public class SeatReservationsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var result = await _reservationService.ClaimSeatAsync(request, cancellationToken);
-
         if (!result.Claimed)
             return Conflict(new { message = "Seat is already reserved.", result.EventId, result.SeatId });
 
+        await _orchestrator.HandleAsync(new StartBookingSagaCommand(
+            CorrelationId: request.ReservationToken,
+            EventId:       request.EventId,
+            SeatId:        request.SeatId,
+            CustomerId:    request.CustomerId,
+            Amount:        request.Amount,
+            Currency:      request.Currency,
+            Notes:         request.Notes), cancellationToken);
         return Ok(result);
     }
 

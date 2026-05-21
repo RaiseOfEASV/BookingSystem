@@ -19,13 +19,13 @@ public sealed class SeatReservationService : ISeatReservationService
     {
         bool claimed = await _cache.TryClaimSeatAsync(
             request.EventId,
-            request.SeatId,
+            request.SeatId.ToString(),
             request.ReservationToken,
             cancellationToken);
 
         return new SeatClaimResult(
             request.EventId,
-            request.SeatId,
+            request.SeatId.ToString(),
             request.ReservationToken,
             claimed);
     }

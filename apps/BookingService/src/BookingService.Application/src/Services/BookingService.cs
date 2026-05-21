@@ -1,3 +1,5 @@
+using BookingService.Application.Events.Definitions;
+using BookingService.Application.Exceptions;
 using BookingService.Application.Interfaces;
 using BookingService.Application.Models;
 using BookingService.Domain.Models;
@@ -14,21 +16,46 @@ public sealed class BookingService : IBookingService
         _repository = repository;
     }
 
-    public async Task<BookingDto> CreateAsync(
+    public async Task<BookingResult> CreateAsync(
         CreateBookingRequest request,
         CancellationToken cancellationToken = default)
     {
+        // One booking per saga is an invariant — CorrelationId is sufficient as the idempotency key
+        var existing = await _repository.GetByCorrelationIdAsync(request.CorrelationId, cancellationToken);
+        if (existing is not null)
+        {
+            return BookingResult.FromSuccess(
+                new BookingCreatedEvent(request.CorrelationId, existing.Id));
+        }
+
         var booking = Booking.Create(
-            customerId: request.CustomerId,
-            eventId:    request.EventId,
-            seatId:     request.SeatId,
-            price:      new Price(request.Amount.Amount, request.Currency),
-            code:       BookingCode.Generate(),
-            notes:      request.Notes);
-
-        var created = await _repository.CreateAsync(booking, cancellationToken);
-
-        return ToDto(created);
+            correlationId: request.CorrelationId,
+            customerId:    request.CustomerId,
+            eventId:       request.EventId,
+            seatId:        request.SeatId,
+            price:         new Price(request.Amount.Amount, request.Currency),
+            code:          BookingCode.Generate(),
+            notes:         request.Notes);
+        try
+        {
+            var created = await _repository.CreateAsync(booking, cancellationToken);
+            return BookingResult.FromSuccess(
+                new BookingCreatedEvent(request.CorrelationId, created.Id));
+        }
+        catch (DuplicateBookingException)
+        {
+            return BookingResult.FromFailure(new BookingCreationFailedEvent(
+                CorrelationId: request.CorrelationId,
+                BookingId:     Guid.Empty,
+                Reason:        "A booking  is already created for this event."));
+        }
+        catch (BookingPersistenceException)
+        {
+            return BookingResult.FromFailure(new BookingCreationFailedEvent(
+                CorrelationId: request.CorrelationId,
+                BookingId:     Guid.Empty,
+                Reason:        "Infrastructure error after retries exhausted."));
+        }
     }
 
     public async Task<BookingDto> ConfirmAsync(
@@ -46,11 +73,8 @@ public sealed class BookingService : IBookingService
         CancellationToken cancellationToken = default)
     {
         var booking = await GetOrThrowAsync(bookingId, cancellationToken);
-
         booking.Cancel();
-
         var updated = await _repository.UpdateAsync(booking, cancellationToken);
-
         return ToDto(updated);
     }
 
