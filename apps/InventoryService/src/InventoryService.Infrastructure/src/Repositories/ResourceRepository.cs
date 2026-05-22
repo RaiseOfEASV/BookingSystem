@@ -17,7 +17,27 @@ public class ResourceRepository : IResourceRepository
         _context = context;
     }
 
-    async Task<SeatInventoryDto?> IResourceRepository.GetSeatInventoryAsync(Guid eventId, Guid seatId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<SeatInventoryDto>> GetAvailableSeatsForEventAsync(
+        Guid eventId,
+        CancellationToken cancellationToken = default)
+        => await _context.SeatInventories
+            .Where(si => si.EventId == eventId && si.Status == SeatStatusMapper.ToString(SeatStatus.Available))
+            .AsNoTracking()
+            .Select(si => new SeatInventoryDto
+            {
+                EventId = si.EventId,
+                SeatId  = si.SeatId,
+                Status  = si.Status,
+                Version = si.Version,
+                HeldBy  = si.HeldBy,
+                HeldAt  = si.HeldAt
+            })
+            .ToListAsync(cancellationToken);
+
+    public async Task<SeatInventoryDto?> GetSeatInventoryAsync(
+        Guid eventId,
+        Guid seatId,
+        CancellationToken cancellationToken = default)
     {
         var entity = await _context.SeatInventories
             .Where(si => si.EventId == eventId && si.SeatId == seatId && si.Status == SeatStatusMapper.ToString(SeatStatus.Available))
@@ -37,7 +57,9 @@ public class ResourceRepository : IResourceRepository
         };
     }
 
-    public async Task UpdateSeatStatusAsync(SeatInventoryDto seatInventory, CancellationToken cancellationToken = default)
+    public async Task UpdateSeatStatusAsync(
+        SeatInventoryDto seatInventory,
+        CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(
             IsolationLevel.ReadCommitted,
@@ -67,22 +89,5 @@ public class ResourceRepository : IResourceRepository
             await transaction.RollbackAsync(cancellationToken);
             throw;
         }
-    }
-
-    async Task<IEnumerable<SeatInventoryDto>> IResourceRepository.GetAvailableSeatsForEventAsync(Guid eventId, CancellationToken cancellationToken)
-    {
-        return await _context.SeatInventories
-            .Where(si => si.EventId == eventId && si.Status == SeatStatusMapper.ToString(SeatStatus.Available))
-            .AsNoTracking()
-            .Select(si => new SeatInventoryDto
-            {
-                EventId = si.EventId,
-                SeatId  = si.SeatId,
-                Status  = si.Status,
-                Version = si.Version,
-                HeldBy  = si.HeldBy,
-                HeldAt  = si.HeldAt
-            })
-            .ToListAsync(cancellationToken);
     }
 }
