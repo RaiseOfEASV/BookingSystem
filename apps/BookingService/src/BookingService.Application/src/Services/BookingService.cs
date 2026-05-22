@@ -33,7 +33,7 @@ public sealed class BookingService : IBookingService
             customerId:    request.CustomerId,
             eventId:       request.EventId,
             seatId:        request.SeatId,
-            price:         new Price(request.Amount.Amount, request.Currency),
+            price:         request.Amount,
             code:          BookingCode.Generate(),
             notes:         request.Notes);
         try
