@@ -9,7 +9,6 @@ namespace InventoryService.Infrastructure.Repositories.Postgres;
 public class MessageRepository : IMessageRepository
 {
     private readonly MessagesDbContext _context;
-    
 
     public MessageRepository(MessagesDbContext context)
     {
