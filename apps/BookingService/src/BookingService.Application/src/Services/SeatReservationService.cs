@@ -12,7 +12,6 @@ public sealed class SeatReservationService : ISeatReservationService
         _cache = cache;
     }
 
-    
     public async Task<SeatClaimResult> ClaimSeatAsync(
         SeatBookingRequest request,
         CancellationToken cancellationToken = default)
