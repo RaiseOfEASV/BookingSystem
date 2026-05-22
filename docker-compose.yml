@@ -80,7 +80,7 @@ services:
     ports:
       - "5000:80"
     volumes:
-      - ./nginx/:/etc/nginx/conf.d/
+      - ./infra/nginx/:/etc/nginx/conf.d/
     depends_on:
       - booking-api
       - inventory-api
