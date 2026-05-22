@@ -47,7 +47,7 @@ public sealed class BookingService : IBookingService
             return BookingResult.FromFailure(new BookingCreationFailedEvent(
                 CorrelationId: request.CorrelationId,
                 BookingId:     Guid.Empty,
-                Reason:        "A booking  is already created for this event."));
+                Reason:        "A booking is already created for this event."));
         }
         catch (BookingPersistenceException)
         {
