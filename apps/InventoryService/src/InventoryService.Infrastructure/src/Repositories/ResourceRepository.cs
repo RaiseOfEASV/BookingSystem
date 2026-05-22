@@ -17,15 +17,6 @@ public class ResourceRepository : IResourceRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<SeatInventory>> GetAvailableSeatsForEventAsync(
-        Guid eventId,
-        CancellationToken cancellationToken = default)
-        => await _context.SeatInventories
-            .Where(si => si.EventId == eventId && si.Status == SeatStatusMapper.ToString(SeatStatus.Available))
-            .Include(si => si.Seat)
-            .AsNoTracking()
-            .ToListAsync(cancellationToken);
-
     async Task<SeatInventoryDto?> IResourceRepository.GetSeatInventoryAsync(Guid eventId, Guid seatId, CancellationToken cancellationToken)
     {
         var entity = await _context.SeatInventories
@@ -93,30 +84,5 @@ public class ResourceRepository : IResourceRepository
                 HeldAt  = si.HeldAt
             })
             .ToListAsync(cancellationToken);
-    }
-
-    public async Task<SeatInventory?> GetSeatInventoryAsync(
-        Guid eventId,
-        Guid seatId,
-        CancellationToken cancellationToken = default)
-        => await _context.SeatInventories
-            .FirstOrDefaultAsync(si => si.EventId == eventId && si.SeatId == seatId, cancellationToken);
-
-    public async Task UpdateSeatStatusAsync(
-        SeatInventory seatInventory,
-        CancellationToken cancellationToken = default)
-    {
-        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-        try
-        {
-            _context.SeatInventories.Update(seatInventory);
-            await _context.SaveChangesAsync(cancellationToken);
-            await transaction.CommitAsync(cancellationToken);
-        }
-        catch
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            throw;
-        }
     }
 }
