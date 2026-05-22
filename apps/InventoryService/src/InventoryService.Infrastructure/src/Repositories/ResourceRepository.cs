@@ -49,7 +49,7 @@ public class ResourceRepository : IResourceRepository
     public async Task UpdateSeatStatusAsync(SeatInventoryDto seatInventory, CancellationToken cancellationToken = default)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync(
-            IsolationLevel.ReadCommitted, 
+            IsolationLevel.ReadCommitted,
             cancellationToken);
 
         try
@@ -57,7 +57,7 @@ public class ResourceRepository : IResourceRepository
             var updated = await _context.SeatInventories
                 .Where(si => si.SeatId  == seatInventory.SeatId  &&
                              si.EventId == seatInventory.EventId &&
-                             si.Version == seatInventory.Version-1)
+                             si.Version == seatInventory.Version - 1)
                 .ExecuteUpdateAsync(si => si
                         .SetProperty(x => x.Status,  seatInventory.Status)
                         .SetProperty(x => x.Version, seatInventory.Version)
@@ -74,12 +74,25 @@ public class ResourceRepository : IResourceRepository
         catch
         {
             await transaction.RollbackAsync(cancellationToken);
-            throw; 
+            throw;
         }
     }
-    Task<IEnumerable<SeatInventoryDto>> IResourceRepository.GetAvailableSeatsForEventAsync(Guid eventId, CancellationToken cancellationToken)
+
+    async Task<IEnumerable<SeatInventoryDto>> IResourceRepository.GetAvailableSeatsForEventAsync(Guid eventId, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _context.SeatInventories
+            .Where(si => si.EventId == eventId && si.Status == SeatStatusMapper.ToString(SeatStatus.Available))
+            .AsNoTracking()
+            .Select(si => new SeatInventoryDto
+            {
+                EventId = si.EventId,
+                SeatId  = si.SeatId,
+                Status  = si.Status,
+                Version = si.Version,
+                HeldBy  = si.HeldBy,
+                HeldAt  = si.HeldAt
+            })
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<SeatInventory?> GetSeatInventoryAsync(
