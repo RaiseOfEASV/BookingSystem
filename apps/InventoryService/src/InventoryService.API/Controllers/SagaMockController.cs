@@ -20,7 +20,7 @@ public class SagaMockController : ControllerBase
     public SagaMockController(IMessageClient messageClient, IWebHostEnvironment env)
     {
         _messageClient = messageClient;
-        _env                = env;
+        _env           = env;
     }
 
     /// <summary>
